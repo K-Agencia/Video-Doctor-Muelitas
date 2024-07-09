@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerUser } from '../middelware/aws/cognito.js';
+import { registerUser } from '../middleware/aws/cognito.js';
 
 const app = express();
 

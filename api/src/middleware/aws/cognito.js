@@ -7,15 +7,12 @@ const Cognito = new CognitoIdentityProviderClient({
   region: process.env.AWS_COGNITO_REGION,
 });
 
-export const registerUser = async (req, res, next) => {
+export const registerUser = async ({ data }) => {
+
   const {
-    mother,
-    father,
-    children,
     email,
-    password,
-    birthdate
-  } = req.body;
+    password
+  } = data;
 
   const SecretHash = secretHash(email);
 
@@ -27,16 +24,35 @@ export const registerUser = async (req, res, next) => {
   };
 
   try {
-
     const SignUp = new SignUpCommand(params);
     const data = await Cognito.send(SignUp);
-
-    console.log(data);
-    res.status(201).json({ message: 'Usuario registrado con éxito', data: data });
-
+    return { subCognito: data.UserSub };
   } catch (error) {
-    console.error(error);
-    next();
-    res.status(500).json({ message: 'Error al registrar el usuario', error });
+    throw error;
   }
 };
+
+export const signInUser = async (data) => {
+  const { email, password } = data;
+
+  const SecretHash = secretHash(email);
+
+  const signIn = new InitiateAuthCommand({
+    ClientId: process.env.AWS_COGNITO_CLIENT_ID,
+    AuthFlow: "USER_PASSWORD_AUTH",
+    AuthParameters: {
+      "SECRET_HASH": SecretHash,
+      "USERNAME": email,
+      "PASSWORD": password
+    }
+  })
+
+  try {
+    const response = await Cognito.send(signIn);
+    // res.send(response)
+    // console.log(response);]
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
