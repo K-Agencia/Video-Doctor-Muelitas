@@ -8,6 +8,7 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import typeDefinitions from './src/graphql/typeDefinitions.js';
 import resolvers from './src/graphql/resolvers.js';
 import { dbConnect } from './src/config/config_db.js';
+import router from './src/restapi/router/index.js';
 
 dotenv.config();
 
@@ -24,8 +25,10 @@ const server = new ApolloServer({
 
 await server.start();
 
+app.use('/rst', router)
+
 app.use(
-  '/',
+  '/gpl',
   cors(),
   express.json({ limit: '50mb' }),
   expressMiddleware(server, {

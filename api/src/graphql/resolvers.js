@@ -1,6 +1,6 @@
 import { GraphQLError } from "graphql";
 import { comfirmForgotPasswordUser, forgotPasswordUser, registerUser, signInUser } from "../middleware/aws/cognito.js";
-import { addAccessUser, createUserDB, getDataUserByEmail, getDataUserById } from "../middleware/resolvers/index.js";
+import { addAccessUser, createUserDB, getDataUserByEmail, getDataUserById } from "../middleware/db/index.js";
 
 const resolvers = {
   Query: {
