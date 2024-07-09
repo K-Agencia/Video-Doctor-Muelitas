@@ -1,10 +1,16 @@
 import {
-  CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, ConfirmSignUpCommand, AssociateSoftwareTokenCommand, VerifySoftwareTokenCommand
+  CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, ConfirmSignUpCommand, AssociateSoftwareTokenCommand, VerifySoftwareTokenCommand,
+  ForgotPasswordCommand,
+  AdminGetUserCommand,
+  ListUserPoolsCommand,
+  ConfirmForgotPasswordCommand
 } from '@aws-sdk/client-cognito-identity-provider';
+import { fromIni } from "@aws-sdk/credential-providers";
 import secretHash from '../../helpers/secretHash.js';
 
 const Cognito = new CognitoIdentityProviderClient({
   region: process.env.AWS_COGNITO_REGION,
+  credentials: fromIni({ profile: 'newAccess-Dev' })
 });
 
 export const registerUser = async ({ data }) => {
@@ -51,6 +57,55 @@ export const signInUser = async (data) => {
     const response = await Cognito.send(signIn);
     return response;
   } catch (error) {
+    throw error;
+  }
+}
+
+export const forgotPasswordUser = async ({ email }) => {
+  try {
+    const SecretHash = secretHash(email);
+
+    const getUser = new AdminGetUserCommand({
+      UserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
+      Username: email
+    })
+
+    await Cognito.send(getUser);
+
+    const forgotPassword = new ForgotPasswordCommand({
+      ClientId: process.env.AWS_COGNITO_CLIENT_ID,
+      Username: email,
+      SecretHash
+    })
+
+    await Cognito.send(forgotPassword);
+    return true;
+  } catch (error) {
+    if (error.message == "User does not exist.") {
+      throw new Error(`El usuario con el correo '${email}' no existe en nuestra base de datos.`);
+    }
+    throw error;
+  }
+}
+
+export const comfirmForgotPasswordUser = async ({ code, email, password }) => {
+  try {
+    const SecretHash = secretHash(email);
+
+    const forgotPassword = new ConfirmForgotPasswordCommand({
+      ClientId: process.env.AWS_COGNITO_CLIENT_ID,
+      ConfirmationCode: code.toString(),
+      Username: email,
+      Password: password,
+      SecretHash
+    })
+
+    await Cognito.send(forgotPassword);
+    return true;
+  } catch (error) {
+    if (error.message == "Invalid verification code provided, please try again.") {
+      throw new Error(`El código de verificación es incorrecto. Por favor, revisa nuevamente el código y vuelve a intentarlo más tarde.`);
+    }
     throw error;
   }
 }

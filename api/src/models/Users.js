@@ -28,6 +28,10 @@ const User = new mongoose.Schema(
     },
     correo: {
       type: String
+    },
+    access: {
+      type: [Date],
+      default: undefined
     }
   },
   {

@@ -18,7 +18,13 @@ const typeDefs = `#graphql
     email: String!
     password: String!
   }
-  
+
+  input InputForgotPassword {
+    code: Int!
+    email: String!
+    password: String!
+  }
+
   type User {
     id: ID!
     father: Person!
@@ -48,12 +54,14 @@ const typeDefs = `#graphql
   }
 
   type Query{
-    getUser: String
+    getUser(id: String!): User
+    forgotPassword(email: String!): String
   }
 
   type Mutation{
     loginUser(InputLogin: InputLogin!): Acoount
     createUser(InputCreateUser: InputCreateUser!): User
+    comfirmForgotPassword(InputForgotPassword: InputForgotPassword!): String
   }
 `;
 

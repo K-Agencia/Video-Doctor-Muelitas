@@ -41,9 +41,42 @@ export const createUserDB = async (input) => {
   }
 }
 
-export const getDataUser = async ({ correo }) => {
+export const getDataUserById = async ({ id }) => {
   try {
-    return await Users.find({ correo: correo }).exec();
+    return await Users.findById(id).exec();
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getDataUserByEmail = async ({ correo }) => {
+  try {
+    const user = await Users.find({ correo: correo }).exec();
+
+    if (user.length === 0) {
+      throw new Error('Usuario no encontrado');
+    }
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const addAccessUser = async ({ id }) => {
+  const accessNow = new Date();
+  try {
+    const user = await Users.findByIdAndUpdate(
+      id,
+      { $push: { access: accessNow } },
+      { new: true }
+    );
+
+    if (!user) {
+      new Error('Usuario no encontrado');
+    }
+
+    return true;
   } catch (error) {
     throw error;
   }
