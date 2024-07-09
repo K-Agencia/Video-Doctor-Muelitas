@@ -49,8 +49,6 @@ export const signInUser = async (data) => {
 
   try {
     const response = await Cognito.send(signIn);
-    // res.send(response)
-    // console.log(response);]
     return response;
   } catch (error) {
     throw error;

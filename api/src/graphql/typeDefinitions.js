@@ -37,7 +37,14 @@ const typeDefs = `#graphql
   type Acoount {
     id: ID!
     children: Person!
-    token: [String]!
+    token: Tokens!
+  }
+
+  type Tokens {
+    AccessToken: String!
+    IdToken: String!
+    RefreshToken: String!
+    ExpiresIn: String!
   }
 
   type Query{

@@ -41,9 +41,9 @@ export const createUserDB = async (input) => {
   }
 }
 
-export const getDataUser = async ({ id }) => {
+export const getDataUser = async ({ correo }) => {
   try {
-    return await Users.find({ subCognito: id }).exec();
+    return await Users.find({ correo: correo }).exec();
   } catch (error) {
     throw error;
   }

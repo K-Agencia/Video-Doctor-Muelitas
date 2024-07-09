@@ -19,6 +19,7 @@ const server = new ApolloServer({
   typeDefs: typeDefinitions,
   resolvers: resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  includeStacktraceInErrorResponses: false
 });
 
 await server.start();
