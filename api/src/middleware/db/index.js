@@ -1,3 +1,4 @@
+import Files from "../../models/Files.js";
 import Users from "../../models/Users.js";
 
 export const createUserDB = async (input) => {
@@ -77,6 +78,66 @@ export const addAccessUser = async ({ id }) => {
     }
 
     return true;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getUsers = async (options) => {
+  try {
+    const users = await Users.find(options);
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getFiles = async () => {
+  try {
+    const users = await Files.aggregate([
+      {
+        $project: {
+          namefile: 1,
+          path: 1,
+          downloads: {
+            $size: "$access"
+          },
+          createdAt: 1
+        }
+      }
+    ]);
+    return users;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getFilesWithRange = async ({ start, end }) => {
+  try {
+    const users = await Files.aggregate([
+      {
+        $project: {
+          namefile: 1,
+          path: 1,
+          downloads: {
+            $size: {
+              $filter: {
+                input: "$access",
+                as: "accessDate",
+                cond: {
+                  $and: [
+                    { $gte: ["$$accessDate", start] },
+                    { $lte: ["$$accessDate", end] }
+                  ]
+                }
+              }
+            }
+          },
+          createdAt: 1
+        }
+      }
+    ]);
+    return users;
   } catch (error) {
     throw error;
   }

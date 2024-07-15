@@ -17,9 +17,11 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
+    "excel4node": "^1.8.2",
     "express": "^4.19.2",
     "graphql": "^16.9.0",
     "mongoose": "^8.4.5",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.4"
   }
 }

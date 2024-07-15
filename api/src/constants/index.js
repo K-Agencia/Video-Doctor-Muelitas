@@ -1,4 +1,4 @@
-export const AWS_COGNITO_USER_POOL_ID = process.env.AWS_COGNITO_USER_POOL_ID;
-export const AWS_COGNITO_CLIENT_ID = process.env.AWS_COGNITO_CLIENT_ID;
-export const AWS_COGNITO_REGION = process.env.AWS_COGNITO_REGION;
-export const AWS_COGNITO_SECRET_HASH = process.env.AWS_COGNITO_SECRET_HASH;
+export const typeReport = Object.freeze({
+  MENSUAL: 'mensual',
+  UUSUARIO: 'usuario'
+})
