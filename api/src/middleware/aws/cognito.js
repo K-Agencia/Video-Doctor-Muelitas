@@ -109,3 +109,33 @@ export const comfirmForgotPasswordUser = async ({ code, email, password }) => {
     throw error;
   }
 }
+
+
+export const refreshTokens = async ({ refreshToken, sub }) => {
+
+  const SecretHash = secretHash(sub);
+
+  const params = {
+    AuthFlow: 'REFRESH_TOKEN_AUTH',
+    ClientId: process.env.AWS_COGNITO_CLIENT_ID,
+    AuthParameters: {
+      REFRESH_TOKEN: refreshToken,
+      SECRET_HASH: SecretHash
+    },
+  };
+
+  try {
+    const command = new InitiateAuthCommand(params);
+    const response = await Cognito.send(command);
+    const { AccessToken, IdToken } = response.AuthenticationResult;
+
+    return {
+      accessToken: AccessToken,
+      idToken: IdToken,
+    };
+
+  } catch (error) {
+    console.error('Error refreshing tokens:', error);
+    throw error;
+  }
+};

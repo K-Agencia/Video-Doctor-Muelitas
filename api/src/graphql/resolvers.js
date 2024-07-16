@@ -4,6 +4,9 @@ import { addAccessUser, createUserDB, getDataUserByEmail, getDataUserById } from
 
 const resolvers = {
   Query: {
+    getString() {
+      return "Hola mundo";
+    },
     async getUser(_, args) {
       const data = await getDataUserById({ id: args.id });
       // return null;

@@ -54,6 +54,7 @@ const typeDefs = `#graphql
   }
 
   type Query{
+    getString: String
     getUser(id: String!): User
     forgotPassword(email: String!): String
   }

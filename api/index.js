@@ -10,6 +10,8 @@ import typeDefinitions from './src/graphql/typeDefinitions.js';
 import resolvers from './src/graphql/resolvers.js';
 import { dbConnect } from './src/config/config_db.js';
 import router from './src/restapi/router/index.js';
+import { verifyIdToken } from './src/auth/token.js';
+import { notValidationToken } from './src/constants/index.js';
 
 dotenv.config();
 
@@ -33,7 +35,16 @@ app.use(
   cors(),
   express.json({ limit: '50mb' }),
   expressMiddleware(server, {
-    context: async ({ req }) => ({ token: req.headers.token }),
+    context: async ({ req, res }) => {
+      const operationName = req.body.operationName;
+
+      if (notValidationToken.includes(operationName)) {
+        return {};
+      }
+
+      const { email, sub } = await verifyIdToken(req.headers);
+      return { email, sub };
+    },
   }),
 );
 
