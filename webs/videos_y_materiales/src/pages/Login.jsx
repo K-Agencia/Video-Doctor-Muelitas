@@ -3,7 +3,7 @@ import { Button, HR } from "flowbite-react";
 import { IoMdLock, IoMdMail } from "react-icons/io";
 import { Link } from "react-router-dom";
 import InputText from "../components/InputText";
-import LayoutRouters from "../constants/LayoutRouters";
+import { RoutersLink } from "../constants/LayoutRouters";
 
 const Login = () => {
 
@@ -55,7 +55,7 @@ const Login = () => {
             error={errors.password}
           />
 
-          <Link className="w-full mb-3 text-center text-sm text-sky-600 underline" to={LayoutRouters.OLVIDADO}>¿Has olvidado tu contraseña?</Link>
+          <Link className="w-full mb-3 text-center text-sm text-sky-600 underline" to={RoutersLink.FORGOT_EMAIL}>¿Has olvidado tu contraseña?</Link>
 
           <Button className="w-full" type="submit">Iniciar Sesión</Button>
 
@@ -64,7 +64,7 @@ const Login = () => {
           <div className="w-5/6 mt-3">
             <p className="text-sm text-center mb-2">Si aún no te has registrado, da clic en el siguiente botón</p>
 
-            <Link to={LayoutRouters.REGISTRARSE}>
+            <Link to={RoutersLink.SIGNUP}>
               <Button color={'success'} className="w-full" type="button">Resgistrarse</Button>
             </Link>
           </div>

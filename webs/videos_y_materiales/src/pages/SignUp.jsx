@@ -5,12 +5,12 @@ import { Button, HR, Modal } from "flowbite-react";
 import { IoMdLock, IoMdMail } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import InputText from "../components/InputText";
-import LayoutRouters from "../constants/LayoutRouters";
+import { RoutersLink } from "../constants/LayoutRouters";
 import InputCheckbox from "../components/InputCheckbox";
 // import Notifications from "../components/Notifications";
 // import { notifications } from "../constants";
 
-const Registrarse = () => {
+const SignUp = () => {
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -163,7 +163,7 @@ const Registrarse = () => {
           <div className="w-5/6 mt-3">
             <p className="text-sm text-center mb-2">Si ya estás has registrado, da clic en el siguiente botón</p>
 
-            <Link to={LayoutRouters.LOGIN}>
+            <Link to={RoutersLink.LOGIN}>
               <Button color={'success'} className="w-full" type="button">Iniciar Sesión</Button>
             </Link>
           </div>
@@ -186,4 +186,4 @@ const Registrarse = () => {
   );
 };
 
-export default Registrarse;
+export default SignUp;

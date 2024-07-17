@@ -1,19 +1,24 @@
 import { createBrowserRouter } from "react-router-dom";
-import LayoutRouters from "../constants/LayoutRouters";
+import { Nested, Routers } from "../constants/LayoutRouters";
 import Login from "../pages/Login";
-import Registrarse from "../pages/Registrarse";
+import SignUp from "../pages/SignUp";
 
 export const router = createBrowserRouter([
   {
-    path: LayoutRouters.LOGIN,
+    path: Routers.LOGIN,
     element: <Login />
   },
   {
-    path: LayoutRouters.RECUPERACION,
-    element: <h2>RECUPERACION</h2>
+    path: Routers.FORGOT,
+    children: [
+      {
+        path: Nested.EMAIL,
+        element: <h1>CMABIAR</h1>
+      }
+    ]
   },
   {
-    path: LayoutRouters.REGISTRARSE,
-    element: <Registrarse />
-  }
+    path: Routers.SIGNUP,
+    element: <SignUp />
+  },
 ])
