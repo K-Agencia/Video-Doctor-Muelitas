@@ -1,16 +1,20 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Checkbox, HR, Label, Modal } from "flowbite-react";
-import { IoMdLock, IoMdMail } from "react-icons/io";
 import { Link } from "react-router-dom";
+import { Button, HR, Modal } from "flowbite-react";
+import { IoMdLock, IoMdMail } from "react-icons/io";
+import { FaUser } from "react-icons/fa";
 import InputText from "../components/InputText";
 import LayoutRouters from "../constants/LayoutRouters";
-import { useState } from "react";
+import InputCheckbox from "../components/InputCheckbox";
+// import Notifications from "../components/Notifications";
+// import { notifications } from "../constants";
 
 const Registrarse = () => {
 
   const [openModal, setOpenModal] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, watch } = useForm({
     defaultValues: {
       padre: {
         nombre: '',
@@ -38,49 +42,57 @@ const Registrarse = () => {
         <p>AQUI VÁ UNA IMAGEN</p>
       </div>
 
-      <div className="container h-full  flex justify-center items-center">
+      <div className="container h-full mt-10 flex justify-center items-center">
         <form className="w-5/6 md:w-1/2 flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold mb-5">Registrarse</h1>
 
-          <InputText
-            {...register('padre.nombre', {
-              required: "Este campo es requerido"
-            })}
-            label="Nombre"
-            placeholder="Nombre"
-            icon={IoMdMail}
-            error={errors.padre?.nombre}
-          />
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-cols-max md:gap-x-3">
+            <InputText
+              {...register('padre.nombre', {
+                required: "Este campo es requerido"
+              })}
+              label="Nombre"
+              placeholder="Nombre"
+              icon={FaUser}
+              required={true}
+              error={errors.padre?.nombre}
+            />
 
-          <InputText
-            {...register('padre.apellido', {
-              required: "Este campo es requerido"
-            })}
-            label="Apellido"
-            placeholder="Apellido"
-            icon={IoMdMail}
-            error={errors.padre?.apellido}
-          />
+            <InputText
+              {...register('padre.apellido', {
+                required: "Este campo es requerido"
+              })}
+              label="Apellido"
+              placeholder="Apellido"
+              icon={FaUser}
+              required={true}
+              error={errors.padre?.apellido}
+            />
+          </div>
 
-          <InputText
-            {...register('madre.nombre', {
-              required: "Este campo es requerido"
-            })}
-            label="Nombre"
-            placeholder="Nombre"
-            icon={IoMdMail}
-            error={errors.madre?.nombre}
-          />
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-cols-max md:gap-x-3">
+            <InputText
+              {...register('madre.nombre', {
+                required: "Este campo es requerido"
+              })}
+              label="Nombre"
+              placeholder="Nombre"
+              icon={FaUser}
+              required={true}
+              error={errors.madre?.nombre}
+            />
 
-          <InputText
-            {...register('madre.apellido', {
-              required: "Este campo es requerido"
-            })}
-            label="Apellido"
-            placeholder="Apellido"
-            icon={IoMdMail}
-            error={errors.madre?.apellido}
-          />
+            <InputText
+              {...register('madre.apellido', {
+                required: "Este campo es requerido"
+              })}
+              label="Apellido"
+              placeholder="Apellido"
+              icon={FaUser}
+              required={true}
+              error={errors.madre?.apellido}
+            />
+          </div>
 
           <InputText
             {...register('email', {
@@ -89,49 +101,62 @@ const Registrarse = () => {
             label="Correo Electrónico"
             placeholder="ejemplo@dominio.com"
             icon={IoMdMail}
+            required={true}
             error={errors.email}
           />
 
-          <InputText
-            {...register('password', {
-              required: "Este campo es requerido",
-              minLength: {
-                value: 8,
-                message: "La contraseña debe tener como mínimo 8 caracteres"
-              }
-            })}
-            type="password"
-            label="Contraseña"
-            placeholder="*********"
-            autoComplete='off'
-            icon={IoMdLock}
-            error={errors.password}
-          />
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-cols-max md:gap-x-3">
+            <InputText
+              {...register('password', {
+                required: "Este campo es requerido",
+                minLength: {
+                  value: 8,
+                  message: "La contraseña debe tener como mínimo 8 caracteres"
+                }
+              })}
+              type="password"
+              label="Contraseña"
+              placeholder="*********"
+              autoComplete='off'
+              icon={IoMdLock}
+              required={true}
+              error={errors.password}
+            />
 
-          <InputText
-            {...register('comfim', {
-              required: "Este campo es requerido",
-              minLength: {
-                value: 8,
-                message: "La contraseña debe tener como mínimo 8 caracteres"
-              }
-            })}
-            type="password"
-            label="Confirmar Contraseña"
-            placeholder="*********"
-            autoComplete='off'
-            icon={IoMdLock}
-            error={errors.comfim}
-          />
-
-          <div className="flex items-center gap-2">
-            <Checkbox id="accept" />
-            <Label htmlFor="accept">
-              Estoy de acuerdo con la <span className="text-blue-600 underline hover:no-underline dark:text-blue-500" onClick={() => setOpenModal(true)}>Politica de tratatiemto de datos</span>.
-            </Label>
+            <InputText
+              {...register('comfim', {
+                required: "Este campo es requerido",
+                validate: (val) => {
+                  if (watch('password') != val) {
+                    return "Tus contraseñas no coinciden";
+                  }
+                },
+              })}
+              type="password"
+              label="Confirmar Contraseña"
+              placeholder="*********"
+              autoComplete='off'
+              icon={IoMdLock}
+              required={true}
+              error={errors.comfim}
+            />
           </div>
 
-          <Button className="w-full" type="submit">Registrarse</Button>
+          {/* <div className="flex items-center gap-2">
+            
+          </div> */}
+
+          <InputCheckbox
+            {...register('politica', {
+              required: "Este campo es requerido"
+            })}
+            required={true}
+            error={errors.politica}
+          >
+            Estoy de acuerdo con la <span className="text-blue-600 underline hover:no-underline dark:text-blue-500" onClick={() => setOpenModal(true)}>Politica de tratatiemto de datos</span>.
+          </InputCheckbox>
+
+          <Button className="w-full mt-5" type="submit">Registrarse</Button>
 
           <HR.Text className="my-2" />
 
@@ -145,6 +170,7 @@ const Registrarse = () => {
 
         </form>
       </div>
+
 
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Habeas Data</Modal.Header>

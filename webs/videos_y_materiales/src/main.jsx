@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-// import App from './App.jsx'
+import { Toaster } from 'react-hot-toast';
 import { router } from './router/index.jsx';
 import './css/index.css'
 
@@ -13,5 +13,6 @@ const client = new ApolloClient({
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ApolloProvider client={client}>
     <RouterProvider router={router} />
+    <Toaster />
   </ApolloProvider>,
 )
