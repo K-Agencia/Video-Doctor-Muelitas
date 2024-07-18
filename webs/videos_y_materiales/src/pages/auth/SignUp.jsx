@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 import { Button, HR, Modal } from "flowbite-react";
 import { IoMdLock, IoMdMail } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
-import InputText from "../components/InputText";
-import { RoutersLink } from "../constants/LayoutRouters";
-import InputCheckbox from "../components/InputCheckbox";
+import InputText from "../../components/InputText";
+import { RoutersLink } from "../../constants/LayoutRouters";
+import InputCheckbox from "../../components/InputCheckbox";
+
+
+
 // import Notifications from "../components/Notifications";
 // import { notifications } from "../constants";
 
@@ -157,6 +160,10 @@ const SignUp = () => {
           </InputCheckbox>
 
           <Button className="w-full mt-5" type="submit">Registrarse</Button>
+
+          <Link to={RoutersLink.SIGNUP_VERIFY}>
+            <Button color={'success'} className="w-full" type="button">Verificar</Button>
+          </Link>
 
           <HR.Text className="my-2" />
 

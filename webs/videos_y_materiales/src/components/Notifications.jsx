@@ -53,12 +53,14 @@ const Notifications = ({ type, message }) => {
     }
   }
 
-  return toast.custom(
-    <Toast className={styleCard()}>
+  // return toast.success(message)
+
+  return toast.custom((t) => (
+    <Toast className={`${styleCard()} ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
       {typeIcon()}
       <div className="pl-4 text-sm font-normal">{message}</div>
     </Toast>
-  );
+  ));
 };
 
 export default Notifications;

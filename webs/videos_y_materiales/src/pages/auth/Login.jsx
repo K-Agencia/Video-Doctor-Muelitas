@@ -2,8 +2,8 @@ import { useForm } from "react-hook-form";
 import { Button, HR } from "flowbite-react";
 import { IoMdLock, IoMdMail } from "react-icons/io";
 import { Link } from "react-router-dom";
-import InputText from "../components/InputText";
-import { RoutersLink } from "../constants/LayoutRouters";
+import InputText from "../../components/InputText";
+import { RoutersLink } from "../../constants/LayoutRouters";
 
 const Login = () => {
 
@@ -25,8 +25,8 @@ const Login = () => {
         <p>AQUI VÁ UNA IMAGEN</p>
       </div>
 
-      <div className="container h-full flex justify-center items-center">
-        <form className="md:w-1/2 flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
+      <div className="container h-full mt-10 flex justify-center items-center">
+        <form className="w-5/6 md:w-1/2 flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold mb-5">Iniciar Sesión</h1>
 
           <InputText
@@ -55,7 +55,7 @@ const Login = () => {
             error={errors.password}
           />
 
-          <Link className="w-full mb-3 text-center text-sm text-sky-600 underline" to={RoutersLink.FORGOT_EMAIL}>¿Has olvidado tu contraseña?</Link>
+          <Link className="w-full mb-3 text-center text-sm text-sky-600 underline" to={RoutersLink.FORGOT}>¿Has olvidado tu contraseña?</Link>
 
           <Button className="w-full" type="submit">Iniciar Sesión</Button>
 
