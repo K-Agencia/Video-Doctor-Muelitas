@@ -31,7 +31,7 @@ const resolvers = {
     async forgotPassword(_, args) {
       try {
         await forgotPasswordUser({ email: args.email });
-        return `Cógigo enviado`;
+        return `Código enviado`;
       } catch (error) {
         console.log({ error });
         throw new GraphQLError(`${error.message}`);
@@ -61,13 +61,19 @@ const resolvers = {
         }
       } catch (error) {
         if (error.__type === "UserNotConfirmedException") {
-          throw new GraphQLError(`El usuario no está confirmado. Por favor revise la bandeja de su correo electrónico (${InputLogin.email}) y confirme su cuenta, haciendo clic en el enlace.`);
+          throw new GraphQLError(`El correo electronico no ha sido verificado.`);
         }
 
-        if (error.message) {
-          throw new GraphQLError(`${error.message}`);
+        if (error.message === 'Incorrect username or password.') {
+          throw new GraphQLError(`Nombre de usuario o contraseña incorrecta`);
         }
+
+        if (error.message == "Attempt limit exceeded, please try after some time.") {
+          throw new Error(`Se superó el límite de intentos fallidos. Inténtelo después de un tiempo.`);
+        }
+
         console.log({ error });
+        throw new GraphQLError(`${error.message}`);
       }
     },
     async createUser(_, { InputCreateUser }) {
@@ -81,7 +87,13 @@ const resolvers = {
         const res = await createUserDB({ ...InputCreateUser, ...cognito });
         return res;
       } catch (error) {
+
         console.log(error);
+
+        if (error.message === "User already exists") {
+          throw new GraphQLError(`El usuario con el correo ${InputCreateUser.email} ya existe en la base de datos`);
+        }
+        throw new GraphQLError(error.message);
       }
     },
     async comfirmForgotPassword(_, { InputForgotPassword }) {

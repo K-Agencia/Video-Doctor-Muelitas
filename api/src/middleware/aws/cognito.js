@@ -2,7 +2,6 @@ import {
   CognitoIdentityProviderClient, SignUpCommand, InitiateAuthCommand, ConfirmSignUpCommand, AssociateSoftwareTokenCommand, VerifySoftwareTokenCommand,
   ForgotPasswordCommand,
   AdminGetUserCommand,
-  ListUserPoolsCommand,
   ConfirmForgotPasswordCommand
 } from '@aws-sdk/client-cognito-identity-provider';
 import { fromIni } from "@aws-sdk/credential-providers";
@@ -30,6 +29,18 @@ export const registerUser = async ({ data }) => {
   };
 
   try {
+    const getUser = new AdminGetUserCommand({
+      UserPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
+      Username: email
+    })
+
+    const getUserRes = await Cognito.send(getUser);
+    const emailVerified = getUserRes.UserAttributes.find(attribute => attribute.Name === "email_verified");
+
+    if (emailVerified.Value === 'false') {
+      throw new Error('El correo electronico no ha sido verificado.')
+    }
+
     const SignUp = new SignUpCommand(params);
     const data = await Cognito.send(SignUp);
     return { subCognito: data.UserSub };
@@ -70,7 +81,12 @@ export const forgotPasswordUser = async ({ email }) => {
       Username: email
     })
 
-    await Cognito.send(getUser);
+    const getUserRes = await Cognito.send(getUser);
+    const emailVerified = getUserRes.UserAttributes.find(attribute => attribute.Name === "email_verified");
+
+    if (emailVerified.Value === 'false') {
+      throw new Error('El correo electronico no ha sido verificado.')
+    }
 
     const forgotPassword = new ForgotPasswordCommand({
       ClientId: process.env.AWS_COGNITO_CLIENT_ID,
@@ -104,8 +120,13 @@ export const comfirmForgotPasswordUser = async ({ code, email, password }) => {
     return true;
   } catch (error) {
     if (error.message == "Invalid verification code provided, please try again.") {
-      throw new Error(`El código de verificación es incorrecto. Por favor, revisa nuevamente el código y vuelve a intentarlo más tarde.`);
+      throw new Error(`El código de verificación es incorrecto.`);
     }
+
+    if (error.message == "Attempt limit exceeded, please try after some time.") {
+      throw new Error(`Se superó el límite de intentos fallidos. Inténtelo después de un tiempo.`);
+    }
+
     throw error;
   }
 }

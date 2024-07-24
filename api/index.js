@@ -31,19 +31,19 @@ await server.start();
 app.use('/rst', router)
 
 app.use(
-  '/gpl',
+  '/gql',
   cors(),
   express.json({ limit: '50mb' }),
   expressMiddleware(server, {
     context: async ({ req, res }) => {
-      const operationName = req.body.operationName;
+      // const operationName = req.body.operationName;
 
-      if (notValidationToken.includes(operationName)) {
-        return {};
-      }
+      // if (notValidationToken.includes(operationName)) {
+      //   return {};
+      // }
 
-      const { email, sub } = await verifyIdToken(req.headers);
-      return { email, sub };
+      // const { email, sub } = await verifyIdToken(req.headers);
+      // return { email, sub };
     },
   }),
 );
