@@ -29,7 +29,7 @@ const InputText = React.forwardRef(({ name, placeholder, type, label, icon, auto
         type={type || 'text'}
         placeholder={placeholder}
         icon={icon}
-        autoComplete={autoComplete || "'on"}
+        autoComplete={autoComplete || "on"}
         onChange={onChange}
         onBlur={handleBlur}
         onFocus={() => setFocus(true)}

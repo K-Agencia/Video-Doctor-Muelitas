@@ -1,31 +1,58 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, HR, Modal } from "flowbite-react";
 import { IoMdLock, IoMdMail } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import InputText from "../../components/InputText";
-import { RoutersLink } from "../../constants/LayoutRouters";
 import InputCheckbox from "../../components/InputCheckbox";
-
-
-
-// import Notifications from "../components/Notifications";
-// import { notifications } from "../constants";
+import Notifications from "../../components/Notifications";
+import InputDatepicker from "../../components/InputDatepicker";
+import { RoutersLink } from "../../constants/LayoutRouters";
+import { CREATE_USER } from "../../graphql/mutation";
+import { notifications } from "../../constants";
+import Loader from "../../components/Loader";
 
 const SignUp = () => {
 
   const [openModal, setOpenModal] = useState(false);
+  const navigate = useNavigate()
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm({
+  const [createUserMutation, { loading }] = useMutation(CREATE_USER, {
+    onError(err) {
+      console.error('GraphQL Error:', err.graphQLErrors);
+      console.error('Network Error:', err.networkError);
+
+      Notifications({
+        type: notifications.ERROR,
+        message: err.graphQLErrors[0].message
+      })
+
+      if (err.graphQLErrors[0].message === "El correo electronico no ha sido verificado.") {
+        navigate(RoutersLink.SIGNUP_CONFIRM, {
+          state: {
+            email: watch('email')
+          }
+        });
+      }
+    }
+  })
+
+  const { register, handleSubmit, formState: { errors, isSubmitted }, watch, setValue, clearErrors, setError } = useForm({
     defaultValues: {
-      padre: {
-        nombre: '',
-        apellido: ''
+      father: {
+        firstname: '',
+        lastname: ''
       },
-      madre: {
-        nombre: '',
-        apellido: ''
+      mother: {
+        firstname: '',
+        lastname: ''
+      },
+      children: {
+        firstname: '',
+        lastname: '',
+        birthdate: ''
       },
       email: '',
       password: '',
@@ -34,72 +61,215 @@ const SignUp = () => {
     }
   })
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    window.scrollTo(0, 0)
+
+    try {
+      const res = await createUserMutation({
+        variables: {
+          inputCreateUser: {
+            father: {
+              firstname: data.father.firstname,
+              lastname: data.father.lastname,
+            },
+            mother: {
+              firstname: data.mother.firstname,
+              lastname: data.mother.lastname,
+            },
+            children: {
+              firstname: data.children.firstname,
+              lastname: data.children.lastname,
+              birthdate: data.children.birthdate,
+            },
+            email: data.email,
+            password: data.password
+          }
+        }
+      })
+
+      localStorage.setItem('email', res.data.createUser.email);
+      navigate(RoutersLink.SIGNUP_CONFIRM, {
+        replace: true
+      })
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
+  console.log(loading);
+
   return (
-    <div className='min-w-screen min-h-screen grid md:grid-cols-2 grid-cols-1'>
+    <div className={`min-w-screen min-h-screen grid md:grid-cols-2 grid-cols-1`}>
 
       <div className="hidden h-full md:flex justify-center items-center bg-amber-500">
-        <p>AQUI VÁ UNA IMAGEN</p>
+        <p>AQUI VA UNA IMAGEN</p>
       </div>
 
-      <div className="container h-full mt-10 flex justify-center items-center">
-        <form className="w-5/6 md:w-1/2 flex flex-col justify-center items-center" onSubmit={handleSubmit(onSubmit)}>
-          <h1 className="text-3xl font-bold mb-5">Registrarse</h1>
+      <div className={`h-full py-10 flex justify-center align-center flex-col items-center`}>
+        <h1 className="text-3xl font-bold mb-5">Registrarse</h1>
+        <form className="w-5/6 flex flex-col justify-center" onSubmit={handleSubmit(onSubmit)}>
 
+          <h1 className="text-xl font-bold mb-3">Información del padre</h1>
           <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-cols-max md:gap-x-3">
             <InputText
-              {...register('padre.nombre', {
-                required: "Este campo es requerido"
+              {...register('father.firstname', {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe contener mínimo 3 letras."
+                }
               })}
               label="Nombre"
               placeholder="Nombre"
               icon={FaUser}
               required={true}
-              error={errors.padre?.nombre}
+              error={errors.father?.firstname}
             />
 
             <InputText
-              {...register('padre.apellido', {
-                required: "Este campo es requerido"
+              {...register('father.lastname', {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe contener mínimo 3 letras."
+                }
               })}
               label="Apellido"
               placeholder="Apellido"
               icon={FaUser}
               required={true}
-              error={errors.padre?.apellido}
+              error={errors.father?.lastname}
             />
           </div>
 
+          <HR.Text className="my-2" />
+
+          <h1 className="text-xl font-bold mb-3">Información de la madre</h1>
+
           <div className="w-full grid grid-cols-1 md:grid-cols-2 auto-cols-max md:gap-x-3">
             <InputText
-              {...register('madre.nombre', {
-                required: "Este campo es requerido"
+              {...register('mother.firstname', {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe contener mínimo 3 letras."
+                }
               })}
               label="Nombre"
               placeholder="Nombre"
               icon={FaUser}
               required={true}
-              error={errors.madre?.nombre}
+              error={errors.mother?.firstname}
             />
 
             <InputText
-              {...register('madre.apellido', {
-                required: "Este campo es requerido"
+              {...register('mother.lastname', {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe contener mínimo 3 letras."
+                }
               })}
               label="Apellido"
               placeholder="Apellido"
               icon={FaUser}
               required={true}
-              error={errors.madre?.apellido}
+              error={errors.mother?.lastname}
             />
           </div>
+
+          <HR.Text className="my-2" />
+
+          <h1 className="text-xl font-bold mb-3">Información del niño/a</h1>
+
+          <div className="w-full grid grid-cols-1 md:grid-cols-3 auto-cols-max md:gap-x-3">
+            <InputText
+              {...register('children.firstname', {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe contener mínimo 3 letras."
+                }
+              })}
+              label="Nombre"
+              placeholder="Nombre"
+              icon={FaUser}
+              required={true}
+              error={errors.children?.firstname}
+            />
+
+            <InputText
+              {...register('children.lastname', {
+                required: "Este campo es requerido",
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
+                },
+                minLength: {
+                  value: 3,
+                  message: "Este campo debe contener mínimo 3 letras."
+                }
+              })}
+              label="Apellido"
+              placeholder="Apellido"
+              icon={FaUser}
+              required={true}
+              error={errors.children?.lastname}
+            />
+
+            <InputDatepicker
+              name={'children.birthdate'}
+              label={"Fecha de nacimiento"}
+              required={true}
+              setValue={setValue}
+              setError={setError}
+              clearErrors={clearErrors}
+              isSubmitted={isSubmitted}
+              error={errors.children?.birthdate}
+            />
+
+
+          </div>
+
+          <HR.Text className="my-2" />
+
+          <h1 className="text-xl font-bold mb-3">Información para la autenticación</h1>
 
           <InputText
             {...register('email', {
-              required: "Este campo es requerido"
+              required: "Este campo es requerido",
+              validate: (value) => {
+                if (value.trim() == "") {
+                  return "Este campo no puede estar vacío"
+                }
+              }
             })}
             label="Correo Electrónico"
             placeholder="ejemplo@dominio.com"
@@ -115,6 +285,11 @@ const SignUp = () => {
                 minLength: {
                   value: 8,
                   message: "La contraseña debe tener como mínimo 8 caracteres"
+                },
+                validate: (value) => {
+                  if (value.trim() == "") {
+                    return "Este campo no puede estar vacío"
+                  }
                 }
               })}
               type="password"
@@ -145,10 +320,6 @@ const SignUp = () => {
             />
           </div>
 
-          {/* <div className="flex items-center gap-2">
-            
-          </div> */}
-
           <InputCheckbox
             {...register('politica', {
               required: "Este campo es requerido"
@@ -159,15 +330,11 @@ const SignUp = () => {
             Estoy de acuerdo con la <span className="text-blue-600 underline hover:no-underline dark:text-blue-500" onClick={() => setOpenModal(true)}>Politica de tratatiemto de datos</span>.
           </InputCheckbox>
 
-          <Button className="w-full mt-5" type="submit">Registrarse</Button>
-
-          <Link to={RoutersLink.SIGNUP_VERIFY}>
-            <Button color={'success'} className="w-full" type="button">Verificar</Button>
-          </Link>
+          <Button className="w-4/6 mx-auto my-2" type="submit">Registrarse</Button>
 
           <HR.Text className="my-2" />
 
-          <div className="w-5/6 mt-3">
+          <div className="w-4/6 mx-auto mt-2">
             <p className="text-sm text-center mb-2">Si ya estás has registrado, da clic en el siguiente botón</p>
 
             <Link to={RoutersLink.LOGIN}>
@@ -189,6 +356,9 @@ const SignUp = () => {
           </div>
         </Modal.Body>
       </Modal>
+
+      {loading && <Loader />}
+
     </div>
   );
 };

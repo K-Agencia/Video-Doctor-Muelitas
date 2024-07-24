@@ -1,0 +1,4 @@
+.InputDatepicker .Datepicker div.absolute:nth-child(2) {
+  position: absolute !important;
+  top: auto !important;
+}

@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { RoutersLink } from '../../../constants/LayoutRouters';
 
 const VerifyAccount = () => {
+
+  localStorage.removeItem('email');
+
   return (
     <div className='w-screen h-screen grid md:grid-cols-2 grid-cols-1'>
 
       <div className="hidden h-full md:flex justify-center items-center bg-amber-500">
-        <p>AQUI VÁ UNA IMAGEN</p>
+        <p>AQUI VA UNA IMAGEN</p>
       </div>
 
       <div className="container h-full mt-10 flex flex-col justify-center items-center">

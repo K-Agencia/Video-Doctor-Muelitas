@@ -6,6 +6,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     flowbite.content(),
+    "./node_modules/tailwind-datepicker-react/dist/**/*.js",
   ],
   theme: {
     extend: {
